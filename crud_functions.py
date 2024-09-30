@@ -14,13 +14,33 @@ def initiate_db():
     )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Users(
+    id INTEGER PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    balance INTEGER NOT NULL
+    )
+    ''')
+
 
 # for i in range(1, 5):
 #     cursor.execute('INSERT INTO Products(title, description, price) VALUES (?, ?, ?)',
 #                    (f'Название: Product {i}', f'Описание: описание {i}', f'Цена: {i * 100}'))
 
 
-# cursor.execute('DELETE FROM Products')    # Очистка базы данных (database.bd)
+def is_included(username):
+    exist_user = cursor.execute('SELECT * FROM Users WHERE username=?', (username,)).fetchone()
+    if exist_user is None:
+        return True
+    connection.commit()
+
+
+def add_user(username, email, age):
+    cursor.execute('INSERT INTO Users(username, email, age, balance) VALUES (?, ?, ?, ?)',
+                   (f'{username}', f'{email}', f'{age}', f'1000'))
+    connection.commit()
 
 
 def get_all_products():
@@ -37,11 +57,10 @@ def get_all_products():
     return products_list
 
 
+connection.commit()
 prod_list = get_all_products()
 
-connection.commit()
-connection.close()
+# cursor.execute('DELETE FROM Users')
+# initiate_db()
 
-
-
-
+# connection.close()
